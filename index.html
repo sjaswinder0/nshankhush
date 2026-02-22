@@ -3,402 +3,389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Powered by Love</title>
+    <title>Happy 1st Anniversary</title>
+    <!-- Elegant Google Fonts for a classic, romantic typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    
     <style>
-        :root {
-            --dawn-orange: #fdba74;
-            --dawn-pink: #f472b6;
-            --text-main: #4c1d95;
-            --glass-bg: rgba(25, 10, 50, 0.7);
-        }
-        body, html {
+        /* CSS Reset & Base Styles */
+        * {
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: linear-gradient(to bottom, #1e0b42, #fb7185, #fdba74);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: white;
-            touch-action: none;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Removes touch highlight on iOS */
         }
-        #canvas-container {
-            width: 100%;
+
+        body, html {
             height: 100%;
-            display: block;
+            width: 100%;
+            font-family: 'Lora', serif;
+            overflow: hidden; /* Prevent scrolling, keeps it a single viewport app */
+            background-color: #000; /* Pure black background to blend with image opacity */
         }
-        #ui-layer {
+
+        /* 1. Background Image */
+        .background-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
+            /* Uses image.jpeg from the same folder */
+            background: url('image.jpeg') center center / cover no-repeat;
+            opacity: 0.6; /* Sets the background image itself to 60% opacity */
+            z-index: 1;
+        }
+
+        /* Heart Animation Layer (from previous enhancement) */
+        .heart-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows user to tap envelopes through the hearts */
+            z-index: 3;
+            overflow: hidden;
+        }
+
+        .falling-heart {
+            position: absolute;
+            top: -10%;
+            color: #ff4d4d;
+            animation: fall linear forwards;
+            opacity: 0.8;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Main UI Layer */
+        .ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
             display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* Generic transition class for smooth state changes */
+        .fade-element {
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            transition: opacity 0.8s ease, visibility 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-element.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 2. Floating Envelopes */
+        .envelope-wrapper {
+            cursor: pointer;
+            transform: translateY(30px) scale(0.9); /* Starts slightly lower & smaller */
+        }
+
+        .envelope-wrapper.active {
+            transform: translateY(0) scale(1);
+        }
+
+        .envelope {
+            width: 120px;
+            height: 120px;
+            /* Added purple glow to stand out against background */
+            filter: drop-shadow(0 0 25px rgba(123, 44, 191, 0.8)) drop-shadow(0 5px 15px rgba(0,0,0,0.9));
+            /* Changed to a more active float and shake animation */
+            animation: floatAndShake 2.5s ease-in-out infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+
+        .envelope-svg {
+            width: 100%;
+            height: 100%;
+            fill: #7b2cbf; /* Luxury purple color */
+        }
+
+        @keyframes floatAndShake {
+            0% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(-6deg); }
+            50% { transform: translateY(-25px) rotate(6deg); }
+            75% { transform: translateY(-15px) rotate(-4deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .envelope::after {
+            content: "Tap to open";
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-family: 'Playfair Display', serif;
+            white-space: nowrap;
+            letter-spacing: 1px;
+            animation: pulseText 2s infinite;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* 3. Classic Letter Modal */
+        .letter-modal {
+            background-color: #fdfbf7; /* Off-white, paper-like color */
+            width: 100%;
+            max-width: 380px; /* Optimal reading width for iPhone */
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 0 15px rgba(255,255,255,0.5);
+            text-align: center;
+            transform: translateY(30px) scale(0.95);
+        }
+
+        .letter-modal.active {
+            transform: translateY(0) scale(1);
+        }
+
+        .letter-modal h2 {
+            font-family: 'Playfair Display', serif;
+            color: #2c2c2c;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .letter-modal p {
+            color: #4a4a4a;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            margin-bottom: 35px;
+            text-align: justify;
+        }
+
+        .action-btn {
+            background-color: #2c2c2c;
+            color: #fff;
+            border: none;
+            padding: 16px 30px; /* Generous touch target for mobile */
+            font-size: 1.1rem;
+            font-family: 'Playfair Display', serif;
+            border-radius: 30px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s, background-color 0.2s;
+            width: 100%;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+            background-color: #1a1a1a;
+        }
+
+        /* 4. Final Message */
+        .final-message {
+            text-align: center;
+            color: #ffffff;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            line-height: 1.5;
+            padding: 0 20px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            transform: scale(0.9);
+        }
+
+        .final-message.active {
+            transform: scale(1);
+            transition: opacity 2s ease, visibility 2s ease, transform 2s ease; 
+        }
+
+        .final-message span.sub-text {
+            display: block;
+            margin-top: 10px;
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fce4e4;
+        }
+
+        .khush-msg {
+            display: block;
+            font-size: 1.8rem;
+            margin-top: 25px;
+            font-weight: 600;
+            color: #ffcccc;
+        }
+
+        /* Portrait lock overlay for iPhone */
+        #orientation-warning {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000;
+            z-index: 9999;
+            color: #fff;
+            text-align: center;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 10;
+            padding: 20px;
         }
-        .message-box {
-            width: 75%;
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: 500;
-            line-height: 1.5;
-            opacity: 0;
-            transform: translateY(30px);
-            background: var(--glass-bg);
-            color: #fff;
-            padding: 24px;
-            border-radius: 24px;
-            border: 1px solid rgba(253, 186, 116, 0.4);
-            backdrop-filter: blur(15px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        #orientation-warning p { font-size: 1.5rem; line-height: 1.5; font-family: 'Playfair Display', serif; }
+        #orientation-warning svg { width: 50px; height: 50px; margin-bottom: 20px; animation: rotatePhone 2s infinite ease-in-out; }
+        
+        @keyframes rotatePhone {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(-90deg); }
+            100% { transform: rotate(-90deg); }
         }
-        .final-message {
-            position: absolute;
-            top: 25%;
-            width: 85%;
-            text-align: center;
-            opacity: 0;
-            z-index: 20;
-        }
-        .valentine-wish {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-shadow: 0 0 15px rgba(251, 113, 133, 1);
-        }
-        .final-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-            color: white;
-            line-height: 1.2;
-        }
-        .final-subtitle {
-            font-size: 1.1rem;
-            font-weight: 400;
-            color: #fce7f3;
-        }
-        .footer-note {
-            position: absolute;
-            bottom: 30px;
-            width: 100%;
-            text-align: center;
-            font-size: 0.75rem;
-            letter-spacing: 1.5px;
-            color: rgba(255, 255, 255, 0.7);
-            opacity: 0;
-            text-transform: uppercase;
-        }
-        #interaction-hint {
-            position: absolute;
-            bottom: 90px;
-            width: 100%;
-            text-align: center;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #fdba74;
-            letter-spacing: 1px;
-            animation: pulse 2.5s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; transform: scale(0.98); }
-            50% { opacity: 1; transform: scale(1.02); }
+
+        /* Force user to rotate if in landscape */
+        @media screen and (orientation: landscape) and (max-height: 600px) {
+            #orientation-warning { display: flex; }
+            .ui-layer, .heart-container, .background-container { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <div id="canvas-container"></div>
-
-    <div id="ui-layer">
-        <div id="message-display" class="message-box"></div>
-        
-        <div id="final-display" class="final-message">
-            <div class="valentine-wish">Happy Valentine's Day my Love</div>
-            <div class="final-title">Khush means the world to me.</div>
-            <div class="final-subtitle">In every universe, I choose her.</div>
-        </div>
-
-        <div id="interaction-hint">TAP THE MECHANIC TOOLS</div>
-        <div id="footer" class="footer-note">Built by a mechanic. Powered by love.</div>
+    <!-- Orientation Lock Screen -->
+    <div id="orientation-warning">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <p>Please rotate your iPhone<br>to portrait mode.</p>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Background Layer -->
+    <div class="background-container"></div>
 
-    <script>
-        let scene, camera, renderer, raycaster, mouse;
-        let tools = [];
-        let clickedCount = 0;
-        const totalTools = 5;
-        let isFinalSequence = false;
+    <!-- Heart Animation Layer -->
+    <div id="heart-container" class="heart-container"></div>
+
+    <!-- UI Layer -->
+    <div class="ui-layer">
         
-        const messages = [
-            "Like every bolt I tighten, my love for Khush grows stronger.",
-            "In this garage of dreams, Khush is my masterpiece.",
-            "No engine runs smoother than my heart when she smiles.",
-            "I would rebuild the world just to see her happy.",
-            "She is the horsepower behind my universe."
-        ];
+        <!-- Reusable Dynamic Envelope -->
+        <div id="envelope-wrapper" class="envelope-wrapper fade-element active">
+            <div class="envelope">
+                <!-- Luxury Purple SVG Envelope -->
+                <svg class="envelope-svg" viewBox="0 0 512 512">
+                    <path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/>
+                </svg>
+            </div>
+        </div>
 
-        function init() {
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0xfb7185); 
-            scene.fog = new THREE.Fog(0x1e0b42, 4, 18);
+        <!-- Reusable Dynamic Letter Modal -->
+        <div id="letter-modal" class="letter-modal fade-element">
+            <h2 id="letter-title">Title</h2>
+            <p id="letter-text">Message</p>
+            <button class="action-btn" id="next-btn">I have read it</button>
+        </div>
 
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(7.5, 2.5, 6.5); 
-            camera.lookAt(0, 0, 0);
+        <!-- Final Message -->
+        <div id="final-msg" class="final-message fade-element">
+            ❤️ Still choosing you. <br>
+            <span class="sub-text">Every year. Every day. ❤️</span>
+            <span class="khush-msg">Love you Khush ❤️</span>
+        </div>
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.outputEncoding = THREE.sRGBEncoding;
-            document.getElementById('canvas-container').appendChild(renderer.domElement);
+    </div>
 
-            raycaster = new THREE.Raycaster();
-            mouse = new THREE.Vector2();
+    <!-- Application Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 1. Heart Dropping Animation ---
+            const heartContainer = document.getElementById('heart-container');
+            
+            function createHeart() {
+                const heart = document.createElement('div');
+                heart.classList.add('falling-heart');
+                heart.innerHTML = '❤️';
+                
+                // Randomize horizontal position, animation duration, and size
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = Math.random() * 4 + 4 + 's'; // Between 4 and 8s
+                heart.style.fontSize = Math.random() * 1.2 + 0.8 + 'rem'; // Between 0.8rem and 2.0rem
+                
+                heartContainer.appendChild(heart);
+                
+                setTimeout(() => { heart.remove(); }, 8000); // Cleanup memory
+            }
+            setInterval(createHeart, 400);
 
-            setupLights();
-            createEnvironment();
-            createMuscleCar();
-            createTools();
-            createAtmosphere();
-
-            window.addEventListener('resize', onWindowResize);
-            window.addEventListener('touchstart', onTouch, { passive: false });
-            window.addEventListener('mousedown', onMouseDown);
-
-            animate();
-        }
-
-        function setupLights() {
-            scene.add(new THREE.AmbientLight(0x4c1d95, 0.6));
-            const sunLight = new THREE.DirectionalLight(0xfdba74, 1.8);
-            sunLight.position.set(-10, 8, -5);
-            scene.add(sunLight);
-            const purpleRim = new THREE.PointLight(0xa855f7, 1.5, 25);
-            purpleRim.position.set(5, 5, 5);
-            scene.add(purpleRim);
-        }
-
-        function createEnvironment() {
-            const floorGeo = new THREE.PlaneGeometry(50, 50);
-            const floorMat = new THREE.MeshStandardMaterial({ color: 0x1e0b42, roughness: 0.1, metalness: 0.8 });
-            const floor = new THREE.Mesh(floorGeo, floorMat);
-            floor.rotation.x = -Math.PI / 2;
-            floor.position.y = -1.2;
-            scene.add(floor);
-        }
-
-        let carGroup;
-        function createMuscleCar() {
-            carGroup = new THREE.Group();
-            const paintMat = new THREE.MeshStandardMaterial({ color: 0x4c1d95, metalness: 0.9, roughness: 0.1 });
-            const windowMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, metalness: 1, roughness: 0 });
-            const tireMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 1 });
-            const chromeMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 1, roughness: 0.1 });
-
-            const chassis = new THREE.Mesh(new THREE.BoxGeometry(2, 0.5, 4.5), paintMat);
-            chassis.position.y = 0.25;
-            carGroup.add(chassis);
-
-            const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.6, 2), windowMat);
-            cabin.position.set(0, 0.75, 0.4);
-            carGroup.add(cabin);
-
-            const scoop = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.15, 1), paintMat);
-            scoop.position.set(0, 0.55, -1);
-            carGroup.add(scoop);
-
-            const spoiler = new THREE.Mesh(new THREE.BoxGeometry(2, 0.1, 0.4), paintMat);
-            spoiler.position.set(0, 0.6, 2.1);
-            spoiler.rotation.x = -0.2;
-            carGroup.add(spoiler);
-
-            const wheelPos = [{x: -1.05, z: -1.4}, {x: 1.05, z: -1.4}, {x: -1.05, z: 1.5}, {x: 1.05, z: 1.5}];
-            wheelPos.forEach(p => {
-                const w = new THREE.Group();
-                const tire = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.3, 24), tireMat);
-                tire.rotation.z = Math.PI / 2;
-                const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.32, 12), chromeMat);
-                rim.rotation.z = Math.PI / 2;
-                w.add(tire, rim);
-                w.position.set(p.x, 0.1, p.z);
-                carGroup.add(w);
-            });
-
-            const hL = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.2, 0.1), new THREE.MeshStandardMaterial({color: 0x222222}));
-            hL.position.set(-0.65, 0.35, -2.25);
-            const hR = hL.clone(); hR.position.x = 0.65;
-            carGroup.add(hL, hR);
-            carGroup.userData.headlights = [hL, hR];
-
-            carGroup.rotation.y = Math.PI * 0.12; 
-            scene.add(carGroup);
-            gsap.to(carGroup.position, { y: 0.05, duration: 2, repeat: -1, yoyo: true, ease: "sine.inOut" });
-        }
-
-        function createTools() {
-            const toolMat = new THREE.MeshStandardMaterial({ color: 0x999999, metalness: 1, roughness: 0.1 });
-            const toolTypes = ['Wrench', 'Spanner', 'Screwdriver', 'Ratchet', 'Torque'];
-
-            // Tightened layout for mobile vertical viewport (radius 2.6 to 3.8)
-            const layoutData = [
-                { angle: 0.2, radius: 2.7, height: 1.8 },    // Wrench
-                { angle: 1.4, radius: 3.3, height: 2.6 },    // Spanner (further out/higher)
-                { angle: 2.8, radius: 2.4, height: 1.1 },    // Screwdriver (closer/lower)
-                { angle: 4.1, radius: 3.8, height: 1.9 },    // Ratchet (further out)
-                { angle: 5.4, radius: 2.9, height: 2.8 }     // Torque (very high)
+            // --- 2. Anniversary Letters Data ---
+            const anniversaryLetters = [
+                { title: "To My Darling", message: "Honey, can you believe it’s already been a year? Every day with you feels like a little adventure, and I still get butterflies thinking about that magical day we said ‘I do’. You make my heart so full, darling, and I can’t wait for all the years to come." },
+                { title: "My Sweet Love", message: "Darling, our first year of marriage has been the happiest of my life. I love how we laugh, how we dream together, and how every moment with you feels like home. Honey, here’s to a lifetime of days just like this, hand in hand, heart to heart." },
+                { title: "My Dearest Honey", message: "Honey, I still remember your smile on our wedding day like it happened yesterday. Every glance, every touch, every laugh — you make even ordinary moments feel extraordinary, my love." },
+                { title: "Darling of My Heart", message: "Darling, being with you has shown me what true love feels like. You are my safe place, my joy, and my favorite part of every day. I love you more than words can ever say." },
+                { title: "Sweetheart", message: "Sweetheart, one year down and forever to go. Every day with you is a gift, and I promise to keep cherishing every moment, honey, as we continue this amazing journey together." },
+                { title: "Beloved", message: "Beloved, your laughter is my favorite melody, and your hugs are my sanctuary. Darling, thank you for filling my life with warmth, love, and happiness I never knew existed." },
+                { title: "My Love", message: "My love, you are my morning sun and my evening stars. Every day I wake up grateful for you, honey, and fall asleep dreaming of our beautiful life together." },
+                { title: "Honey Bun", message: "Honey bun, our first year has been magical. Your love makes me braver, happier, and more complete. Darling, I treasure every little thing about you." },
+                { title: "Darling Soulmate", message: "Darling soulmate, even after a year, I still get butterflies thinking about holding your hand and looking into your eyes. Honey, you are my forever and always." },
+                { title: "Sweet Love of Mine", message: "Sweet love of mine, this year with you has been the best chapter of my life. Darling, I can’t wait to write every future chapter by your side, filled with laughter, love, and joy." }
             ];
 
-            toolTypes.forEach((name, i) => {
-                const group = new THREE.Group();
-                if(name === 'Wrench') {
-                    const handle = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.7, 0.06), toolMat);
-                    const head = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.05, 8, 16, Math.PI * 1.4), toolMat);
-                    head.position.y = 0.4; head.rotation.z = Math.PI * 0.3;
-                    group.add(handle, head);
-                } else if(name === 'Spanner') {
-                    const handle = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.7, 0.06), toolMat);
-                    const head = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.05, 12, 16), toolMat);
-                    head.position.y = 0.4; group.add(handle, head);
-                } else if(name === 'Screwdriver') {
-                    const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.08, 0.35, 8), new THREE.MeshStandardMaterial({color: 0x4c1d95}));
-                    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.5, 8), toolMat);
-                    shaft.position.y = 0.4;
-                    const tip = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.03, 0.01), toolMat);
-                    tip.position.y = 0.65;
-                    group.add(handle, shaft, tip);
-                } else if(name === 'Ratchet') {
-                    const handle = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.7, 0.06), toolMat);
-                    const head = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.1, 12), toolMat);
-                    head.position.y = 0.4; head.rotation.x = Math.PI/2;
-                    const bit = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.15, 6), toolMat);
-                    bit.position.set(0, 0.4, 0.1); bit.rotation.x = Math.PI/2;
-                    group.add(handle, head, bit);
-                } else if(name === 'Torque') {
-                    const handle = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1, 0.08), toolMat);
-                    const head = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.15), toolMat);
-                    head.position.y = 0.5;
-                    const bit = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.1, 6), toolMat);
-                    bit.position.set(0, 0.5, 0.1); bit.rotation.x = Math.PI/2;
-                    group.add(handle, head, bit);
-                }
+            let currentIndex = 0;
 
-                const data = layoutData[i];
-                group.position.set(Math.cos(data.angle) * data.radius, data.height, Math.sin(data.angle) * data.radius);
-                group.userData = { id: i, clicked: false, originalPos: group.position.clone() };
-                tools.push(group);
-                scene.add(group);
+            // --- 3. DOM Elements & Logic ---
+            const envelopeWrapper = document.getElementById('envelope-wrapper');
+            const letterModal = document.getElementById('letter-modal');
+            const letterTitle = document.getElementById('letter-title');
+            const letterText = document.getElementById('letter-text');
+            const nextBtn = document.getElementById('next-btn');
+            const finalMsg = document.getElementById('final-msg');
+
+            // Opens the envelope and displays the letter
+            envelopeWrapper.addEventListener('click', () => {
+                envelopeWrapper.classList.remove('active'); // Fade out envelope
+                
+                // Wait for fade out, then populate and fade in the letter
+                setTimeout(() => {
+                    letterTitle.textContent = anniversaryLetters[currentIndex].title;
+                    letterText.textContent = anniversaryLetters[currentIndex].message;
+                    letterModal.classList.add('active');
+                }, 600);
             });
-        }
 
-        function createAtmosphere() {
-            const geo = new THREE.BufferGeometry();
-            const count = 300;
-            const pos = new Float32Array(count * 3);
-            for(let i=0; i<count*3; i++) pos[i] = (Math.random() - 0.5) * 25;
-            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-            const mat = new THREE.PointsMaterial({ color: 0xfdba74, size: 0.03, transparent: true, opacity: 0.5 });
-            scene.add(new THREE.Points(geo, mat));
-        }
-
-        function onMouseDown(event) {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-            checkIntersection();
-        }
-
-        function onTouch(event) {
-            if (event.touches.length > 0) {
-                mouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
-                mouse.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
-                checkIntersection();
-            }
-        }
-
-        function checkIntersection() {
-            if (isFinalSequence) return;
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(tools, true);
-            if (intersects.length > 0) {
-                let obj = intersects[0].object;
-                while (obj.parent && !tools.includes(obj)) obj = obj.parent;
-                if (obj.userData && !obj.userData.clicked) handleToolClick(obj);
-            }
-        }
-
-        function handleToolClick(tool) {
-            tool.userData.clicked = true;
-            clickedCount++;
-            if (clickedCount === 1) gsap.to("#interaction-hint", { opacity: 0, duration: 0.5 });
-            gsap.to(tool.scale, { x: 1.8, y: 1.8, z: 1.8, duration: 0.4, ease: "back.out" });
-            tool.traverse(c => { if(c.isMesh) gsap.to(c.material.emissive || {}, { r: 1, g: 0.6, b: 0.3, duration: 0.4 }); });
-
-            const msgBox = document.getElementById('message-display');
-            gsap.killTweensOf(msgBox); 
-            const tl = gsap.timeline();
-            tl.to(msgBox, { opacity: 0, y: 20, duration: 0.2, onComplete: () => { msgBox.innerText = messages[tool.userData.id]; }})
-            .to(msgBox, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" })
-            .to(msgBox, { opacity: 0, y: -20, duration: 0.5, delay: 3, ease: "power2.in" });
-
-            if (clickedCount === totalTools) setTimeout(startFinalSequence, 3800);
-        }
-
-        function startFinalSequence() {
-            isFinalSequence = true;
-            tools.forEach(t => gsap.to(t.position, { y: 15, duration: 2, ease: "power2.in" }));
-            gsap.to(camera.position, { x: 5.5, y: 1.8, z: 4.5, duration: 4, ease: "power2.inOut" });
-            carGroup.userData.headlights.forEach(l => {
-                l.material = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 4 });
-            });
-            gsap.killTweensOf(carGroup.position);
-            gsap.to(carGroup.position, { y: 0.03, duration: 0.06, repeat: -1, yoyo: true, ease: "sine.inOut" });
-            gsap.to("#final-display", { opacity: 1, y: -15, duration: 2.5, delay: 1, ease: "power3.out" });
-            gsap.to("#footer", { opacity: 1, duration: 2, delay: 4 });
-            createFallingHearts();
-        }
-
-        function createFallingHearts() {
-            const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.6 });
-            for(let i=0; i<60; i++) {
-                const p = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.08), mat.clone());
-                p.position.set((Math.random()-0.5)*15, 12, (Math.random()-0.5)*15);
-                scene.add(p);
-                gsap.to(p.position, { y: -2, x: p.position.x + (Math.random()-0.5)*4, duration: 5 + Math.random()*5, repeat: -1, delay: Math.random()*5 });
-                gsap.to(p.rotation, { x: 6, y: 6, duration: 4, repeat: -1 });
-            }
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            const time = Date.now() * 0.001;
-            if (!isFinalSequence) {
-                tools.forEach((t, i) => {
-                    if (!t.userData.clicked) {
-                        t.position.y = t.userData.originalPos.y + Math.sin(time + i) * 0.25;
-                        t.rotation.y += 0.015;
-                        t.rotation.z = Math.sin(time * 0.5) * 0.1;
+            // Closes the letter and triggers the next envelope (or final message)
+            nextBtn.addEventListener('click', () => {
+                letterModal.classList.remove('active'); // Fade out letter
+                currentIndex++; // Move to next letter
+                
+                setTimeout(() => {
+                    if (currentIndex < anniversaryLetters.length) {
+                        // Show the next envelope
+                        envelopeWrapper.classList.add('active');
+                    } else {
+                        // All letters read, show the grand finale
+                        finalMsg.classList.add('active');
                     }
-                });
-            }
-            renderer.render(scene, camera);
-        }
-        window.onload = init;
+                }, 600);
+            });
+        });
     </script>
 </body>
 </html>
